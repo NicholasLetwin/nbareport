@@ -59,7 +59,11 @@ function displayGameScores(data) {
         const gameDiv = document.createElement('div');
         gameDiv.className = 'game-card'; 
         gameDiv.innerHTML = `
-            <h3>${game.home_team.full_name} vs. ${game.visitor_team.full_name}</h3>
+            <h3>
+                <span class="team-name">${game.home_team.full_name}</span>
+                <span class="vs">vs.</span>
+                <span class="team-name">${game.visitor_team.full_name}</span>
+            </h3>
             <p>Score: ${game.home_team_score} - ${game.visitor_team_score}</p>
             <p>${gameStatus}</p>
         `;
