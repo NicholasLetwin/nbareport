@@ -1,0 +1,40 @@
+body {
+    background-color:#18191A;
+    color: rgb(196, 196, 196);
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+
+  }
+
+h1 {
+    color: white;
+    font-size: 30px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+}
+
+#game-scores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+.game-card {
+    background-color: #1E1E1E;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 15px;
+    width: 250px;
+    text-align: center;
+}
+.game-card h3 {
+    margin-top: 5px 0;
+    font-size: 1.2em;
+}
+
+.game-card p {
+    margin: 5px 0;
+}
