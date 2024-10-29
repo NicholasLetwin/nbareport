@@ -6,7 +6,7 @@ function getTodayDate() {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-based
-    const day = String(today.getDate()).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0') ;
     return `${year}-${month}-${day}`;
 }
 
@@ -44,7 +44,7 @@ function displayGameScores(data) {
         let isGameInProgress = false; // Initialize the flag
         
         if (game.status === 'Final') {
-            gameStatus = 'Game Finished';
+            gameStatus = 'Final';
         } else if (game.period === 0 && game.status.includes("T")) { // Check for ISO format in status
             // Convert ISO time to a readable format
             const gameStartTime = new Date(game.status);

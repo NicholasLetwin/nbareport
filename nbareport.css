@@ -1,5 +1,5 @@
 body {
-    background-color:#18191A;
+    background-color:#0f151c;
     color: rgb(196, 196, 196);
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
@@ -34,6 +34,43 @@ h1 {
     gap: 20px;
     justify-content: center;
     padding: 20px;
+}
+
+.scoreboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0;
+}
+
+.team {
+    flex: 1;
+    text-align: center;
+    margin: 0 20px;
+}
+
+.team h2 {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.score {
+    font-size: 80px;
+    font-weight: bold;
+    color: white;
+}
+
+.versus {
+    font-size: 30px;
+    color: white;
+    margin: 0 20px;
+}
+
+.game-status {
+    font-size: 18px;
+    color: #cccccc;
+    margin-top: 20px;
 }
 
 
@@ -73,6 +110,7 @@ h1 {
 .game-card:hover {
     transform: scale(1.05); /* Slightly enlarges the card */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds a shadow for depth */
+    cursor: pointer; 
 }
 
 .game-card h3 {
