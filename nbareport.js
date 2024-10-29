@@ -1,7 +1,7 @@
 
 import { API_KEY } from './config.js';
 
-// Function to get today's date in YYYY-MM-DD format
+/// Function to get today's date in YYYY-MM-DD format
 function getTodayDate() {
     const today = new Date();
     const year = today.getFullYear();
@@ -11,26 +11,22 @@ function getTodayDate() {
 }
 
 const todayDate = getTodayDate();
-const API_URL = `https://api.balldontlie.io/v1/games?start_date=${todayDate}&end_date=${todayDate}`;
+// const API_URL = `http://127.0.0.1:5000/api/games?date=${"2024-10-28"}`;
+const API_URL = `https://nbareport.vercel.app/api/games?date=${getTodayDate()}`;
 
 fetchGameScores();
 setInterval(fetchGameScores, 60000);
 
-
 async function fetchGameScores(){
     try{
-        const response = await fetch(API_URL, {
-            headers: {
-                'Authorization': API_KEY
-            }
-        });
+        const response = await fetch(API_URL);
         if(!response.ok){
             throw new Error(`HTTP Error! status: ${response.status}`);
         }
         const data = await response.json();
         console.log(data);
-        displayGameScores(data)
-    }catch (error){
+        displayGameScores(data);
+    } catch (error){
         console.error("Error fetching data: ", error);
     }
 }
@@ -38,42 +34,45 @@ async function fetchGameScores(){
 function displayGameScores(data) {
     const gameContainer = document.getElementById('game-scores');
     gameContainer.innerHTML = '';
-    
-    data.data.forEach(game => {
-        let gameStatus = '';
-        let isGameInProgress = false; // Initialize the flag
-        
-        if (game.status === 'Final') {
-            gameStatus = 'Final';
-        } else if (game.period === 0 && game.status.includes("T")) { // Check for ISO format in status
-            // Convert ISO time to a readable format
-            const gameStartTime = new Date(game.status);
-            if (!isNaN(gameStartTime)) { // Check if date parsing was successful
-                const formattedTime = gameStartTime.toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: true
-                });
-                gameStatus = `Starts at: ${formattedTime}`;
-            } else {
-                gameStatus = 'Start time unavailable';
-            }
-        } else {
-            isGameInProgress = true; // Game is in progress
-            gameStatus = `In Progress - ${game.status}, ${game.time} left`;
+
+    // Group data by GAME_ID
+    const gamesMap = {};
+
+    data.forEach(teamData => {
+        const gameId = teamData.GAME_ID;
+        if (!gamesMap[gameId]) {
+            gamesMap[gameId] = [];
+        }
+        gamesMap[gameId].push(teamData);
+    });
+
+    // Iterate over each game
+    Object.values(gamesMap).forEach(gameTeams => {
+        if (gameTeams.length !== 2) {
+            console.warn(`Both teams not found for game ID: ${gameTeams[0].GAME_ID}`);
+            return;
         }
 
+        // Determine home and visitor teams
+        const [team1, team2] = gameTeams;
+        const homeTeam = team1.HOME_TEAM_ID === team1.TEAM_ID ? team1 : team2;
+        const visitorTeam = team1.HOME_TEAM_ID === team1.TEAM_ID ? team2 : team1;
+
         const gameDiv = document.createElement('div');
-        gameDiv.className = 'game-card'; 
+        gameDiv.className = 'game-card';
+
+        // Safely determine game status
+        const gameStatus = homeTeam.GAME_STATUS_TEXT || "Status Unknown";
+        const isGameInProgress = gameStatus && (gameStatus.includes('Q') || gameStatus.includes('Half'));
 
         gameDiv.innerHTML = `
             <h3>
-                <span class="team-name">${game.home_team.full_name}</span>
+                <span class="team-name">${homeTeam.TEAM_CITY_NAME} ${homeTeam.TEAM_NAME}</span>
                 <span class="vs">vs.</span>
-                <span class="team-name">${game.visitor_team.full_name}</span>
+                <span class="team-name">${visitorTeam.TEAM_CITY_NAME} ${visitorTeam.TEAM_NAME}</span>
             </h3>
-            <p>Score: ${game.home_team_score} - ${game.visitor_team_score}</p>
-            <p>${gameStatus}</p>
+            <p>Score: ${homeTeam.PTS} - ${visitorTeam.PTS}</p>
+            <p>Status: ${gameStatus}</p>
         `;
 
         // Append live indicator if the game is in progress
@@ -84,28 +83,10 @@ function displayGameScores(data) {
         }
 
         gameDiv.addEventListener('click', () => {
-            window.location.href = `game.html?id=${game.id}`;
+            window.location.href = `game.html?id=${homeTeam.GAME_ID}`;
         });
 
         gameContainer.appendChild(gameDiv);
     });
-
-    document.getElementById("fetchFlaskData").addEventListener("click", async () => {
-        try {
-            const testDate = "2024-10-28"; 
-            const response = await fetch(`http://127.0.0.1:5000/api/games?date=${testDate}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const data = await response.json();
-    
-            // Display data in the flask-output div
-            document.getElementById("flask-output").innerText = JSON.stringify(data, null, 2);
-        } catch (error) {
-            console.error("Error fetching data from Flask API:", error);
-            document.getElementById("flask-output").innerText = "Error fetching data from Flask API";
-        }
-    });
-    
 }
 
