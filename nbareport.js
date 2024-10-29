@@ -13,6 +13,10 @@ function getTodayDate() {
 const todayDate = getTodayDate();
 const API_URL = `https://api.balldontlie.io/v1/games?start_date=${todayDate}&end_date=${todayDate}`;
 
+fetchGameScores();
+setInterval(fetchGameScores, 60000);
+
+
 async function fetchGameScores(){
     try{
         const response = await fetch(API_URL, {
@@ -37,6 +41,8 @@ function displayGameScores(data) {
     
     data.data.forEach(game => {
         let gameStatus = '';
+        let isGameInProgress = false; // Initialize the flag
+        
         if (game.status === 'Final') {
             gameStatus = 'Game Finished';
         } else if (game.period === 0 && game.status.includes("T")) { // Check for ISO format in status
@@ -53,11 +59,13 @@ function displayGameScores(data) {
                 gameStatus = 'Start time unavailable';
             }
         } else {
+            isGameInProgress = true; // Game is in progress
             gameStatus = `In Progress - ${game.status}, ${game.time} left`;
         }
 
         const gameDiv = document.createElement('div');
         gameDiv.className = 'game-card'; 
+
         gameDiv.innerHTML = `
             <h3>
                 <span class="team-name">${game.home_team.full_name}</span>
@@ -67,8 +75,19 @@ function displayGameScores(data) {
             <p>Score: ${game.home_team_score} - ${game.visitor_team_score}</p>
             <p>${gameStatus}</p>
         `;
+
+        // Append live indicator if the game is in progress
+        if (isGameInProgress) {
+            const liveIndicator = document.createElement('span');
+            liveIndicator.className = 'live-indicator';
+            gameDiv.appendChild(liveIndicator);
+        }
+
+        gameDiv.addEventListener('click', () => {
+            window.location.href = `game.html?id=${game.id}`;
+        });
+
         gameContainer.appendChild(gameDiv);
     });
 }
 
-fetchGameScores();
