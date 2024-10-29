@@ -89,5 +89,23 @@ function displayGameScores(data) {
 
         gameContainer.appendChild(gameDiv);
     });
+
+    document.getElementById("fetchFlaskData").addEventListener("click", async () => {
+        try {
+            const testDate = "2024-10-28"; 
+            const response = await fetch(`http://127.0.0.1:5000/api/games?date=${testDate}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+    
+            // Display data in the flask-output div
+            document.getElementById("flask-output").innerText = JSON.stringify(data, null, 2);
+        } catch (error) {
+            console.error("Error fetching data from Flask API:", error);
+            document.getElementById("flask-output").innerText = "Error fetching data from Flask API";
+        }
+    });
+    
 }
 
