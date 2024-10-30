@@ -123,7 +123,7 @@ const todayDate = getTodayDate();
 const isLocalhost = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
 const API_URL = isLocalhost
     ? `http://127.0.0.1:5000/api/games?date=${todayDate}`
-    : `https://your-render-url.onrender.com/api/games?date=${todayDate}`;
+    : `https://nbareport.onrender.com/api/games?date=${todayDate}`;
 
 // Initial fetch and interval for periodic updates
 fetchGameScores();
@@ -131,15 +131,38 @@ setInterval(fetchGameScores, 60000);
 
 async function fetchGameScores() {
     try {
-        const response = await fetch(API_URL);
+        console.log("Attempting to fetch from:", API_URL); // Log the URL being called
+        
+        const response = await fetch(API_URL, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        console.log("Response status:", response.status); // Log the response status
+        
         if (!response.ok) {
-            throw new Error(`HTTP Error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error("Error response:", errorText);
+            throw new Error(`HTTP Error! status: ${response.status}, message: ${errorText}`);
         }
+        
         const data = await response.json();
         console.log("Fetched data:", data);
+        
+        if (!Array.isArray(data)) {
+            console.error("Received non-array data:", data);
+            throw new Error("Received unexpected data format");
+        }
+        
         displayGameScores(data);
     } catch (error) {
         console.error("Error fetching data: ", error);
+        // Display error message to user
+        const gameContainer = document.getElementById('game-scores');
+        gameContainer.innerHTML = `<div class="error-message">Error loading games: ${error.message}</div>`;
     }
 }
 

@@ -56,5 +56,12 @@ def get_games():
 def test():
     return jsonify({"message": "CORS is working"})
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat()
+    })
+
 if __name__ == '__main__':
     app.run(debug=True)
