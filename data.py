@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, url_for
 from flask_cors import CORS
 from nba_api.stats.endpoints import ScoreboardV2
 import pandas as pd
@@ -6,19 +6,21 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Apply CORS to all routes with wide-open permissions for testing
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={
+    r"/api/*": {
+        "origins": ["http://127.0.0.1:5500", "https://nbareport.onrender.com"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 @app.route('/')
 def index():
-    return jsonify({
-        "message": "Welcome to NBA API",
-        "endpoints": {
-            "games": "/api/games",
-            "games_by_date": "/api/games?date=YYYY-MM-DD",
-            "game_by_id": "/api/games?gameId=GAME_ID"  # Adding documentation for gameId parameter
-        }
-    })
+    return render_template('index.html')
+
+@app.route('/game.html')
+def game_page():
+    return render_template('game.html')
 
 @app.route('/api/games', methods=['GET'])
 def get_games():
@@ -51,11 +53,7 @@ def get_games():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Temporary test route to confirm CORS is working
-@app.route('/api/test', methods=['GET'])
-def test():
-    return jsonify({"message": "CORS is working"})
-
+# Health check route
 @app.route('/health', methods=['GET'])
 def health_check():
     return jsonify({

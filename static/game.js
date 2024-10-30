@@ -8,7 +8,7 @@ console.log('gameId:', gameId);
 // Check if gameId exists, then fetch details
 if (gameId) {
     // Update to fetch from Flask API
-    fetch(`/api/games?gameId=${gameId}`, {
+    fetch(`http://127.0.0.1:5000/api/games?gameId=${gameId}`, {
         headers: {
             'Authorization': API_KEY // Only include if required by your Flask API
         }
