@@ -119,9 +119,11 @@ function getTodayDate() {
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
-
 const todayDate = getTodayDate();
-const API_URL = `http://127.0.0.1:5000/api/games?date=${todayDate}`;
+const isLocalhost = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+const API_URL = isLocalhost
+    ? `http://127.0.0.1:5000/api/games?date=${todayDate}`
+    : `https://your-render-url.onrender.com/api/games?date=${todayDate}`;
 
 // Initial fetch and interval for periodic updates
 fetchGameScores();
