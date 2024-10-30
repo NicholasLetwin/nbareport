@@ -8,11 +8,21 @@ function getTodayDate() {
 }
 
 const todayDate = getTodayDate();
-const API_URL = `/api/games?date=${todayDate}`;
+const adjustedDate = getAdjustedDate(0);
+const API_URL = `/api/games?date=${adjustedDate}`;
+
+function getAdjustedDate(offsetDays = 0) {
+    const date = new Date();
+    date.setDate(date.getDate() + offsetDays); // Adjust the date by offsetDays
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 // Initial fetch and interval for periodic updates
 fetchGameScores();
-setInterval(fetchGameScores, 60000);
+setInterval(fetchGameScores, 120000);
 
 async function fetchGameScores() {
     try {
@@ -58,20 +68,42 @@ function displayGameScores(data) {
         const homeTeam = team1.HOME_TEAM_ID === team1.TEAM_ID ? team1 : team2;
         const visitorTeam = team1.HOME_TEAM_ID === team1.TEAM_ID ? team2 : team1;
 
+        let homeTeamName = `${homeTeam.TEAM_CITY_NAME} ${homeTeam.TEAM_NAME}`;
+        let visitorTeamName = `${visitorTeam.TEAM_CITY_NAME} ${visitorTeam.TEAM_NAME}`;
+
         const gameDiv = document.createElement('div');
         gameDiv.className = 'game-card';
 
         const gameStatus = homeTeam.GAME_STATUS_TEXT || "Status Unknown";
         const isGameInProgress = gameStatus && (gameStatus.includes('Q') || gameStatus.includes('Half'));
+        const gameEnded = !isGameInProgress && (homeTeam.PTS !== null && visitorTeam.PTS !== null);
+
+        let homeTeamClass = 'team-name';
+        let visitorTeamClass = 'team-name';
+
+        // Determine winner colors if the game has ended
+        if (gameEnded) {
+            if (homeTeam.PTS > visitorTeam.PTS) {
+                homeTeamClass += ' winner'; // Green for winner
+                visitorTeamClass += ' loser'; // Red for loser
+                homeTeamName = "*" + homeTeamName + "*"; // Add asterisks around winner
+            } else {
+                homeTeamClass += ' loser';
+                visitorTeamClass += ' winner';
+                visitorTeamName = "*" + visitorTeamName + "*"; // Add asterisks around winner
+            }
+        }
+
+        const statusText = gameStatus.includes('ET') ? 'Start' : 'Status';
 
         gameDiv.innerHTML = `
             <h3>
-                <span class="team-name">${homeTeam.TEAM_CITY_NAME} ${homeTeam.TEAM_NAME}</span>
+                <span class="${homeTeamClass}">${homeTeamName}</span>
                 <span class="vs">vs.</span>
-                <span class="team-name">${visitorTeam.TEAM_CITY_NAME} ${visitorTeam.TEAM_NAME}</span>
+                <span class="${visitorTeamClass}">${visitorTeamName}</span>
             </h3>
-            <p>Score: ${homeTeam.PTS || 0} - ${visitorTeam.PTS || 0}</p>
-            <p>Status: ${gameStatus}</p>
+            <p class="score-text">Score: ${homeTeam.PTS || 0} - ${visitorTeam.PTS || 0}</p>
+            <p>${statusText}: ${gameStatus}</p>
         `;
 
         // Append a live indicator if the game is in progress
@@ -83,9 +115,12 @@ function displayGameScores(data) {
 
         // Add a click event to open a details page for each game
         gameDiv.addEventListener('click', () => {
-            window.location.href = `game.html?id=${homeTeam.GAME_ID}`;
+            // Use the adjustedDate variable that was used to fetch the games
+            window.location.href = `game.html?id=${homeTeam.GAME_ID}&date=${adjustedDate}`;
         });
 
         gameContainer.appendChild(gameDiv);
     });
 }
+
+

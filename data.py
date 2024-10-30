@@ -36,7 +36,7 @@ def get_games():
         date_obj = datetime.strptime(date_str, '%Y-%m-%d')
         formatted_date = date_obj.strftime('%m/%d/%Y')
 
-        # Fetch game data
+        # Fetch game data for the specified date
         games = ScoreboardV2(game_date=formatted_date)
         game_header = games.game_header.get_data_frame()
         line_score = games.line_score.get_data_frame()
@@ -45,13 +45,14 @@ def get_games():
         merged_data = pd.merge(line_score, game_header, on='GAME_ID', how='left')
         data = merged_data.to_dict(orient='records')
 
-        # If gameId is provided, filter the data to return only the specific game
+        # Filter by gameId if it is provided
         if game_id:
             data = [game for game in data if game['GAME_ID'] == game_id]
 
         return jsonify(data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 # Health check route
 @app.route('/health', methods=['GET'])

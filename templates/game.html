@@ -4,14 +4,27 @@
     <meta charset="UTF-8">
     <title>Game Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='nbareport.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@200;400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Game Dashboard</h1>
-    <button onclick="history.back()" class="back-button">Back</button>
+    <!-- Back Button Outside of Matchup Title -->
+    <div class="back-container">
+        <button onclick="history.back()" class="back-button">Back</button>
+    </div>
+
+    <!-- Matchup Title -->
+    <div class="matchup-abbreviation">
+        <span class="team-abbr">${homeTeamAbbreviation}</span>
+        <span class="vs">vs.</span>
+        <span class="team-abbr">${visitorTeamAbbreviation}</span>
+    </div>
 
     <div id="game-details">
         <!-- Game details will be loaded here by JavaScript -->
     </div>
+    
     <script type="module" src="{{ url_for('static', filename='game.js') }}"></script>
 </body>
+
+
 </html>

@@ -1,32 +1,20 @@
 body {
-    background-color:#0f151c;
+    background-color: #0f151c;
     color: rgb(196, 196, 196);
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Oxanium', sans-serif;
+    position: relative;
 
-
-  }
+}
 
 h1 {
     color: white;
-    font-size: 30px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 40px;
+    font-weight: 600;
     text-align: center;
 }
 
-.back-button {
-    margin: 10px 0;
-    padding: 8px 16px;
-    background-color: #8526b4;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-}
-.back-button:hover {
-    background-color: #542376;
-}
+
+
 
 #game-scores {
     display: flex;
@@ -55,38 +43,84 @@ h1 {
     margin-bottom: 10px;
 }
 
-.score {
-    font-size: 80px;
-    font-weight: bold;
-    color: white;
+.matchup-abbreviation {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Consistent spacing between elements */
+    padding: 20px 0;
+    margin: 0 auto;
+    font-size: 36px;
+    font-weight: 600;
+    color: #e0e0e0;
+    font-family: 'Oxanium', sans-serif;
+}
+
+
+.matchup-abbreviation .team-abbr {
+    flex: 0 0 auto; /* Prevent stretching */
+    display: inline-block;
+    margin: 0;
+    text-align: center;
+}
+
+/* VS in the title */
+.matchup-abbreviation .vs {
+    color: #cccccc;
+    font-weight: 400;
+    position: relative;
+    width: 60px; /* Fixed width to ensure centering */
+    text-align: center;
+    /* Ensure this aligns with the vertical line */
+    transform: translateX(0);
 }
 
 .versus {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 30px;
     color: white;
-    margin: 0 20px;
+    height: 100%;
+    padding: 0 20px;
 }
 
-.game-status {
-    font-size: 18px;
-    color: #cccccc;
-    margin-top: 20px;
+/* Line segment above and below "VS" */
+.versus::before,
+.versus::after {
+    content: "";
+    position: absolute;
+    width: 3px;
+    height: 120px; /* Increased height for longer lines */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: -1; /* Place behind "VS" text */
 }
 
+/* Top line fading out only at the top */
+.versus::before {
+    top: -130px; /* Adjusted to center above the VS text */
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), white);
+}
 
-/* .game-card {
-    position: relative; 
-    background-color: #1E1E1E;
-    color: white;
-    border: 1px solid #444;
-    border-radius: 8px;
-    padding: 15px;
-    width: 250px;
-    text-align: center;
-    background: linear-gradient(0.33turn, #6c2d8e , #22105c);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Bottom line fading out only at the bottom */
+.versus::after {
+    top: 40px; /* Adjusted to center below the VS text */
+    background: linear-gradient(to top, rgba(255, 255, 255, 0), white);
+}
 
-} */
+/* Container to ensure overall centering */
+.matchup-container {
+    width: 100%;
+    max-width: 1200px; /* Or whatever maximum width you prefer */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 .game-card {
     position: relative;
@@ -98,15 +132,32 @@ h1 {
     border-radius: 8px;
     padding: 15px;
     width: 250px;
+
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Ensure content is spaced evenly */
+    align-items: center;
     text-align: center;
     border-width: 2px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.game-card h3 {
+margin-top: 10px 0;
+font-size: 1.2em;
+}
 
+.game-card p {
+    margin: 5px 0;
+}
 
-
-
+.score-text {
+    font-size: 1.2em; /* Increase font size for better visibility */
+    font-weight: medium;
+    margin: 10px 0; /* Add spacing */
+    color: #ffffff;
+}
 
 .team-name {
     display: block;
@@ -128,14 +179,21 @@ h1 {
     cursor: pointer; 
 }
 
-.game-card h3 {
-        text-align: center;
 
-    margin-top: 5px 0;
-    font-size: 1.2em;
+
+.team h2 {
+    font-size: 24px;
+    font-weight: 400;
+    color: white;
+    margin-bottom: 5px; /* Reduced margin to bring it closer to the score */
 }
 
-.game-card p {
+
+.score {
+    font-size: 120px;
+    text-shadow: 0px 4px 8px rgba(255, 255, 255, 0.15), 0px 2px 4px rgba(0, 0, 0, 0.3);
+    font-weight: 500;
+    color: #e0e0e0;
     margin: 5px 0;
 }
 
@@ -147,6 +205,50 @@ h1 {
     height: 10px;
     background-color: red;
     border-radius: 50%;
+}
+
+.team-name.winner {
+    color: #ca6afe;
+    font-weight: bold;
+}
+
+/* Styles for Back Button */
+.back-button {
+    position: absolute;
+    top: 20px; /* Adjust as needed */
+    left: 20px; /* Adjust as needed */
+    background-color: transparent; /* No background for a clean look */
+    border: none;
+    color: #e0e0e0;
+    font-size: 1.5em; /* Adjust font size as needed */
+    font-family: 'Oxanium', sans-serif;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    z-index: 1000; /* Ensures it stays on top */
+}
+
+.back-button:hover {
+    color: #ca6afe; /* Color change on hover */
+}
+
+.team-logo {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+/* .team-name.loser {
+    color: rgb(255, 131, 131);
+    font-weight: bold;
+} */ 
+
+.game-info {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1em;
+    color: #cccccc;
+}
+.game-info p {
+    margin: 5px 0;
 }
 
 
