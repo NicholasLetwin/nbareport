@@ -1,15 +1,16 @@
+// Import API key if needed for your Flask API
 import { API_KEY } from './config.js';
-
 
 const urlParams = new URLSearchParams(window.location.search);
 const gameId = urlParams.get('id');
 console.log('gameId:', gameId);
 
-
+// Check if gameId exists, then fetch details
 if (gameId) {
-    fetch(`https://api.balldontlie.io/v1/games/${gameId}`, {
+    // Update to fetch from Flask API
+    fetch(`http://127.0.0.1:5000/api/games?gameId=${gameId}`, {
         headers: {
-            'Authorization': API_KEY // Include your API key here if required
+            'Authorization': API_KEY // Only include if required by your Flask API
         }
     })
         .then(response => {
@@ -18,10 +19,14 @@ if (gameId) {
             }
             return response.json();
         })
-        .then(responseData => {
-            console.log('Fetched game data:', responseData); // Debugging
-            const game = responseData.data; // Access the game object directly
-            displayGameDetails(game);
+        .then(data => {
+            console.log('Fetched game data:', data);
+            const game = data.find(g => g.GAME_ID === gameId); // Filter the data by gameId
+            if (game) {
+                displayGameDetails(game);
+            } else {
+                throw new Error('Game not found');
+            }
         })
         .catch(error => {
             console.error("Error fetching game details:", error);
@@ -37,22 +42,29 @@ if (gameId) {
     `;
 }
 
-
-function displayGameDetails(game) {
+function displayGameDetails(gameData) {
     const gameDetailsContainer = document.getElementById('game-details');
+
+    // Assume gameData is an object with separate entries for home and visitor teams
+    const homeTeam = gameData.home_team || null;
+    const visitorTeam = gameData.visitor_team || null;
+
+    // Render the game details, ensuring both home and visitor data are included
     gameDetailsContainer.innerHTML = `
         <div class="scoreboard">
             <div class="team home-team">
-                <h2>${game.home_team.full_name}</h2>
-                <div class="score">${game.home_team_score}</div>
+                <h2>${homeTeam ? `${homeTeam.TEAM_CITY_NAME} ${homeTeam.TEAM_NAME}` : 'Home Team'}</h2>
+                <div class="score">${homeTeam && homeTeam.PTS !== null ? homeTeam.PTS : 'N/A'}</div>
             </div>
             <div class="versus">VS</div>
             <div class="team visitor-team">
-                <h2>${game.visitor_team.full_name}</h2>
-                <div class="score">${game.visitor_team_score}</div>
+                <h2>${visitorTeam ? `${visitorTeam.TEAM_CITY_NAME} ${visitorTeam.TEAM_NAME}` : 'Visitor Team'}</h2>
+                <div class="score">${visitorTeam && visitorTeam.PTS !== null ? visitorTeam.PTS : 'N/A'}</div>
             </div>
         </div>
-        <p class="game-status">Status: ${game.status}</p>
-        <!-- Add more details as needed -->
+        <p class="game-status">Status: ${homeTeam && homeTeam.GAME_STATUS_TEXT ? homeTeam.GAME_STATUS_TEXT : 'Scheduled'}</p>
+        <p class="arena-name">Arena: ${homeTeam && homeTeam.ARENA_NAME ? homeTeam.ARENA_NAME : 'Unknown'}</p>
+        <p class="start-time">Start Time: ${homeTeam && homeTeam.GAME_DATE_EST ? homeTeam.GAME_DATE_EST : 'TBD'}</p>
     `;
 }
+
