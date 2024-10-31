@@ -22,9 +22,19 @@
     <div id="game-details">
         <!-- Game details will be loaded here by JavaScript -->
     </div>
+
+    <div class="team-toggle">
+        <div class="team-toggle-buttons">
+            <button id="home-team-btn" class="toggle-btn">Home Team</button>
+            <button id="visitor-team-btn" class="toggle-btn">Visitor Team</button>
+        </div>
+    </div>
+
+    <!-- Container for team box score (player stats) -->
+    <div id="team-box-score">
+        <!-- Player stats for the selected team will be loaded here by JavaScript -->
+    </div>
     
     <script type="module" src="{{ url_for('static', filename='game.js') }}"></script>
 </body>
-
-
 </html>

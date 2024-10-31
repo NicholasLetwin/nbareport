@@ -3,7 +3,7 @@ body {
     color: rgb(196, 196, 196);
     font-family: 'Oxanium', sans-serif;
     position: relative;
-
+    padding-bottom: 60px;
 }
 
 h1 {
@@ -28,8 +28,9 @@ h1 {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 40px 0;
+    margin-bottom: 60px; /* Increased from 60px to create more space below scoreboard */
 }
+
 
 .team {
     flex: 1;
@@ -145,7 +146,12 @@ h1 {
 
 .game-card h3 {
 margin-top: 10px 0;
+font-family: 'Oxanium', sans-serif;
 font-size: 1.2em;
+}
+
+.game-card .team-name {
+    font-weight: 200; /* or any other weight you want to test */
 }
 
 .game-card p {
@@ -208,7 +214,7 @@ font-size: 1.2em;
 }
 
 .team-name.winner {
-    color: #ca6afe;
+    color: #ffffff;
     font-weight: bold;
 }
 
@@ -228,7 +234,7 @@ font-size: 1.2em;
 }
 
 .back-button:hover {
-    color: #ca6afe; /* Color change on hover */
+    color: #ff9671; /* Color change on hover */
 }
 
 .team-logo {
@@ -244,6 +250,7 @@ font-size: 1.2em;
 .game-info {
     text-align: center;
     margin-top: 20px;
+    margin-bottom: 40px;
     font-size: 1.1em;
     color: #cccccc;
 }
@@ -251,5 +258,169 @@ font-size: 1.2em;
     margin: 5px 0;
 }
 
+.at {
+    font-weight: 400; /* Adjust the weight as desired */
+    font-size: 0.8em; /* Adjust the size relative to the surrounding text */
+    color: #cccccc; /* Or any color you prefer */
+}
+
+/* Alternating column colors in the box score table */
+.box-score-table tbody td:nth-child(odd) {
+    background-color: #f9f9f9; /* White for odd columns */
+}
+
+.box-score-table tbody td:nth-child(even) {
+    background-color: #e0e0e0; /* Light gray for even columns */
+}
+
+/* Style for players who did not play */
+.did-not-play {
+    color: #aaa; /* Grayed out text color */
+    opacity: 0.6; /* Lower opacity */
+    font-weight: 200;
+}
+
+/* Team toggle section spacing */
+.team-toggle {
+    text-align: center;
+    margin: 160px 0 10px 0; /* Increased top margin significantly to 160px */
+}
+
+.toggle-btn {
+    padding: 10px 20px;
+    margin: 0 5px;
+    background-color: #444;
+    border: none;
+    color: white;
+    font-family: 'Oxanium', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-btn:hover {
+    background-color: #666;
+}
+
+
+#team-box-score {
+    margin-top: 20px; /* Reduced top margin */
+    padding: 0px;
+    background-color: transparent;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    max-width: 1200px;
+    margin: 20px auto 40px auto; /* Adjusted margin values */
+    color: #e0e0e0;
+}
+/* Box Score Table Styling */
+.box-score-table {
+    width: 100%;
+    border-collapse: collapse; /* Ensures table cells touch each other with no extra space */
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Styling for table headers */
+.box-score-table thead {
+    background-color: #333;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.box-score-table thead th {
+    padding: 12px;
+    text-align: center;
+}
+
+/* Styling for table body */
+.box-score-table tbody tr {
+    transition: background-color 0.2s;
+}
+
+/* Row hover effect */
+.box-score-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Cell padding for readability */
+.box-score-table td {
+    padding: 10px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+/* Left-align player names in the first column */
+.box-score-table td:first-child {
+    text-align: left;
+    font-weight: bold;
+    padding-left: 15px;
+}
+
+/* Zero or placeholder values */
+.box-score-table .zero-value {
+    color: #aaa;
+}
+
+/* Zero or placeholder values */
+.box-score-table .zero-value {
+    color: #aaa; /* Faded color for zero or placeholder values */
+}
+
+/* Container for buttons styled as a toggle switch */
+.team-toggle {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.team-toggle-buttons {
+    display: inline-flex;
+    background-color: #333; /* Background for the "switch" */
+    border-radius: 8px; /* Rounded corners for the unit */
+    overflow: hidden; /* Ensures buttons appear as a single unit */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+}
+
+/* Styling for each button within the toggle group */
+.toggle-btn {
+    padding: 12px 24px;
+    margin: 0; /* Remove margins to make it a single unit */
+    background-color: #444;
+    color: #e0e0e0;
+    font-family: 'Oxanium', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none; /* No border */
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    flex: 1; /* Each button takes up equal space */
+}
+
+/* Add slight border on right for visual separation */
+.toggle-btn:not(:last-child) {
+    border-right: 1px solid #333; /* Divider between buttons */
+}
+
+/* Hover effect */
+.toggle-btn:hover {
+    background-color: #666;
+    color: #ffffff;
+}
+
+/* Active button styling */
+.toggle-btn.active {
+    background-color: #ff9671;
+    color: #ffffff;
+    box-shadow: none; /* No extra shadow on active */
+}
+
+/* Remove focus outline completely */
+.toggle-btn:focus {
+    outline: none;
+    box-shadow: none; /* Remove focus shadow if desired */
+}
 
 

@@ -8,7 +8,7 @@ function getTodayDate() {
 }
 
 const todayDate = getTodayDate();
-const adjustedDate = getAdjustedDate(0);
+const adjustedDate = getAdjustedDate(-1);
 const API_URL = `/api/games?date=${adjustedDate}`;
 
 function getAdjustedDate(offsetDays = 0) {
@@ -22,7 +22,7 @@ function getAdjustedDate(offsetDays = 0) {
 
 // Initial fetch and interval for periodic updates
 fetchGameScores();
-setInterval(fetchGameScores, 120000);
+setInterval(fetchGameScores, 30000);
 
 async function fetchGameScores() {
     try {
@@ -97,14 +97,14 @@ function displayGameScores(data) {
         const statusText = gameStatus.includes('ET') ? 'Start' : 'Status';
 
         gameDiv.innerHTML = `
-            <h3>
-                <span class="${homeTeamClass}">${homeTeamName}</span>
-                <span class="vs">vs.</span>
-                <span class="${visitorTeamClass}">${visitorTeamName}</span>
-            </h3>
-            <p class="score-text">Score: ${homeTeam.PTS || 0} - ${visitorTeam.PTS || 0}</p>
-            <p>${statusText}: ${gameStatus}</p>
-        `;
+        <h3>
+            <span class="${visitorTeamClass}">${visitorTeamName}</span>
+            <span class="at">at</span>
+            <span class="${homeTeamClass}">${homeTeamName}</span>
+        </h3>
+        <p class="score-text">Score: ${visitorTeam.PTS || 0} - ${homeTeam.PTS || 0}</p>
+        <p>${statusText}: ${gameStatus}</p>
+    `;
 
         // Append a live indicator if the game is in progress
         if (isGameInProgress) {

@@ -1,8 +1,11 @@
 from flask import Flask, jsonify, request, render_template, url_for
 from flask_cors import CORS
-from nba_api.stats.endpoints import ScoreboardV2
+from nba_api.stats.endpoints import ScoreboardV2, BoxScoreTraditionalV2
 import pandas as pd
 from datetime import datetime
+import numpy as np
+import traceback
+
 
 app = Flask(__name__)
 
@@ -21,6 +24,7 @@ def index():
 @app.route('/game.html')
 def game_page():
     return render_template('game.html')
+
 
 @app.route('/api/games', methods=['GET'])
 def get_games():
@@ -43,6 +47,10 @@ def get_games():
 
         # Merge data
         merged_data = pd.merge(line_score, game_header, on='GAME_ID', how='left')
+        
+        # Replace NaN values with None
+        merged_data = merged_data.replace({np.nan: None})
+
         data = merged_data.to_dict(orient='records')
 
         # Filter by gameId if it is provided
@@ -52,6 +60,39 @@ def get_games():
         return jsonify(data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/player_stats', methods=['GET'])
+def get_player_stats():
+    game_id = request.args.get('gameId')
+    
+    if not game_id:
+        return jsonify({"error": "Missing gameId parameter"}), 400
+
+    try:
+        print("Fetching BoxScoreTraditionalV2 for game ID:", game_id)  # Debug line
+        box_score = BoxScoreTraditionalV2(game_id=game_id)
+        
+        # Test if the player stats data frame is loaded successfully
+        player_stats_df = box_score.player_stats.get_data_frame()
+        print("Player stats data frame:", player_stats_df.head())  # Display the first few rows for inspection
+        
+        # Select relevant columns
+        player_stats_df = player_stats_df[['PLAYER_NAME', 'TEAM_ID', 'PTS', 'AST', 'REB', 'MIN', 'FGM', 'FGA', 'FG3M', 'FG3A', 'FTM', 'FTA', 'TO']]
+        
+        # Replace NaN values with None
+        player_stats_df = player_stats_df.replace({np.nan: None})
+        
+        # Convert to JSON-serializable dictionary
+        player_stats = player_stats_df.to_dict(orient='records')
+        
+        return jsonify(player_stats)
+    except Exception as e:
+        print("Error encountered in fetching BoxScoreTraditionalV2:", e)  # Print detailed error
+        traceback.print_exc()  # Add this line to print the full traceback
+        return jsonify({'error': str(e)}), 500
+    
+    
+
 
 
 # Health check route
