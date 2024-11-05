@@ -1,3 +1,7 @@
+
+let adjustedDateOffset = 0; // Offset from today in days
+let adjustedDate = getAdjustedDate(adjustedDateOffset); // Initialize with today's date
+
 // Function to get today's date in YYYY-MM-DD format
 function getTodayDate() {
     const today = new Date();
@@ -7,10 +11,7 @@ function getTodayDate() {
     return `${year}-${month}-${day}`;
 }
 
-const todayDate = getTodayDate();
-const adjustedDate = getAdjustedDate(-1);
-const API_URL = `/api/games?date=${adjustedDate}`;
-
+// Function to get an adjusted date by offsetting a certain number of days
 function getAdjustedDate(offsetDays = 0) {
     const date = new Date();
     date.setDate(date.getDate() + offsetDays); // Adjust the date by offsetDays
@@ -20,13 +21,31 @@ function getAdjustedDate(offsetDays = 0) {
     return `${year}-${month}-${day}`;
 }
 
+function updateDateDisplay() {
+    const dateDisplayElement = document.getElementById('current-date');
+    if (dateDisplayElement) {
+        dateDisplayElement.textContent = `Games for ${adjustedDate}`;
+    } else {
+        console.warn("Element with ID 'current-date' not found.");
+    }
+}
+
+function getApiUrl() {
+    return `/api/games?date=${adjustedDate}`;
+}
+// const API_URL = `/api/games?date=${adjustedDate}`;
+
+// Update the displayed date
+updateDateDisplay();
+
 // Initial fetch and interval for periodic updates
 fetchGameScores();
 setInterval(fetchGameScores, 30000);
 
 async function fetchGameScores() {
+    const API_URL = getApiUrl();
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(API_URL); // Add this line
         if (!response.ok) {
             const errorText = await response.text();
             throw new Error(`HTTP Error! status: ${response.status}, message: ${errorText}`);
@@ -42,6 +61,22 @@ async function fetchGameScores() {
         gameContainer.innerHTML = `<div class="error-message">Error loading games: ${error.message}</div>`;
     }
 }
+
+
+document.getElementById('previous-day').addEventListener('click', () => {
+    adjustedDateOffset -= 1; // Move one day back
+    adjustedDate = getAdjustedDate(adjustedDateOffset);
+    updateDateDisplay();
+    fetchGameScores();
+});
+
+document.getElementById('next-day').addEventListener('click', () => {
+    adjustedDateOffset += 1; // Move one day forward
+    adjustedDate = getAdjustedDate(adjustedDateOffset);
+    updateDateDisplay();
+    fetchGameScores();
+});
+
 
 function displayGameScores(data) {
     const gameContainer = document.getElementById('game-scores');
@@ -121,6 +156,5 @@ function displayGameScores(data) {
 
         gameContainer.appendChild(gameDiv);
     });
+
 }
-
-

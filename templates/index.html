@@ -10,12 +10,18 @@
 
     </head>
     <body>
-        
         <h1>NBA Report</h1>
+        
+        <!-- Navigation buttons for changing the date -->
+        <div class="date-changer">
+            <button id="previous-day">Previous Day</button>
+            <span id="current-date"></span>
+            <button id="next-day">Next Day</button>
+        </div>
+    
         <div id="game-scores"></div>
         
         <script type="module" src="{{ url_for('static', filename='nbareport.js') }}"></script>
-
     </body>
 
     
